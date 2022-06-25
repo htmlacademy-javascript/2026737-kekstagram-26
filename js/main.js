@@ -1,3 +1,5 @@
-import { createUserPhotos } from './data.js';
+import { createPhotos } from './data.js';
+import { checkLength } from './util.js';
 
-console.log(createUserPhotos());
+checkLength('Hello', 5);
+createPhotos(25);

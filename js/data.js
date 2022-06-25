@@ -1,6 +1,6 @@
-import { getRandomNumber } from '../js/util.js';
+import { getRandomNumber, getRandomElement } from '../js/util.js';
 
-const PHOTO_DESCRIPTION = [
+const photoDescriptions = [
   'Это моё довольно голодное лицо.',
   '50 оттенков темных кругов под глазами.',
   'Я не знаю, куда иду, но я уже туда еду.',
@@ -19,7 +19,7 @@ const PHOTO_DESCRIPTION = [
   'Врасплох, но в точку!'
 ];
 
-const MESSAGES = [
+const messages = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -28,7 +28,7 @@ const MESSAGES = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-const NAMES = [
+const names = [
   'Карчагин Игорь',
   'Соломинцев Матвей',
   'Чернов Ираклий',
@@ -49,65 +49,34 @@ const NAMES = [
   'Кваснина Полина'
 ];
 
-const USER_PHOTO_COUNT = 25;
-
-const idPhoto = [];
-const getId = (id) => {
-  if (id.length === 0) {
-    id[id.length] = id.length + 1;
-    return id[0];
-  }
-  id[id.length] = id[id.length - 1] + 1;
-  return id[id.length -1];
-};
-
-const urlIndex = [];
-const getUrl = (i) => {
-  if (i.length === 0) {
-    i[i.length] = i.length + 1;
-    return i[0];
-  }
-  i[i.length] = i[i.length - 1] + 1;
-  return i[i.length -1];
-};
-
-const getRandomElement = (element) => element[getRandomNumber(0, element.length - 1)];
-
-const commentId = [];
-const getRandomCommentId = (id) => {
-  let randomId = getRandomNumber(1, id.length * 10 + 2);
-  while(commentId.includes(randomId)) {
-    randomId = getRandomNumber(1, id.length * 3 + 2);
-  }
-  id[id.length] = randomId;
-  return id[id.length -1];
-};
-
 const getMessage = () => {
   const messagesCount = getRandomNumber(1, 2);
-  let message = getRandomElement(MESSAGES);
+  let message = getRandomElement(messages);
   if (messagesCount > 1) {
-    message += getRandomElement(MESSAGES);
+    message += getRandomElement(messages);
   }
   return message;
 };
 
-const getRandomComment = () => ({
-  id: getRandomCommentId(commentId),
+let currentCommentId = 1;
+
+const createComment = () => ({
+  id: currentCommentId++,
   avatar: `img/avatar-${  getRandomNumber(1, 6)  }.svg`,
   message: getMessage(),
-  name: getRandomElement(NAMES)
+  name: getRandomElement(names)
 });
 
+let currentPhotoId = 1;
 
-const createUserPhoto = () => ({
-  id: getId(idPhoto),
-  url: `photos/${  getUrl(urlIndex)  }.jpg`,
-  description: getRandomElement(PHOTO_DESCRIPTION),
+const createPhoto = (_, index) => ({
+  id: currentPhotoId++,
+  url: `photos/${  index + 1  }.jpg`,
+  description: getRandomElement(photoDescriptions),
   likes: getRandomNumber(15, 200),
-  comments: Array.from({length: getRandomNumber(1, 3)}, getRandomComment),
+  comments: Array.from({length: getRandomNumber(1, 3)}, createComment),
 });
 
-const createUserPhotos = () => Array.from({length: USER_PHOTO_COUNT}, createUserPhoto);
+const createPhotos = (count) => Array.from({length: count}, createPhoto);
 
-export {createUserPhotos};
+export {createPhotos};

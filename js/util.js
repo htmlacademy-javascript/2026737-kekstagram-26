@@ -1,4 +1,3 @@
-// возвращающает случайное целое число из переданного диапазона включительно
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -8,14 +7,8 @@ const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-//Проверяет максимальную длину строки
-const checkLength = (string, maxLength) => {
-  if (string.length <= maxLength) {
-    return true;
-  }
-  return false;
-};
+const checkLength = (string, maxLength) => string.length <= maxLength;
 
-export {getRandomNumber};
+const getRandomElement = (arr) => arr[getRandomNumber(0, arr.length - 1)];
 
-checkLength('Hello', 5);
+export {getRandomNumber, checkLength, getRandomElement};
