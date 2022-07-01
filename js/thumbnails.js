@@ -1,11 +1,11 @@
 import { createPhotos } from './data.js';
 
-const userPhotosContainer = document.querySelector('.pictures');//вставляем сюда
-const userPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');//шаблон
+const userPhotosContainer = document.querySelector('.pictures');
+const userPhotoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
 const photosListFragment = document.createDocumentFragment();
 
-const photos = createPhotos(20);
+const photos = createPhotos(3);
 photos.forEach(({url, comments, likes}) => {
   const userPhoto = userPhotoTemplate.cloneNode(true);
   userPhoto.querySelector('.picture__img').src = url;
