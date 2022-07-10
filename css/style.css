@@ -316,6 +316,18 @@ main {
   border: none;
 }
 
+.img-upload__field--error {
+  color: #ff6347;
+}
+
+.img-upload__field-wrapper.has-danger > .text__hashtags {
+  outline: 2px solid #e90000;
+}
+
+.img-upload__field-wrapper.has-danger > .text__description {
+  outline: 2px solid #e90000;
+}
+
 .img-upload__label {
   position: absolute;
 
