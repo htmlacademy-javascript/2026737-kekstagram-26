@@ -9,9 +9,10 @@ const photoUploadElement = document.querySelector('#upload-file');
 const addHashtagElement = document.querySelector('.text__hashtags');
 const addDescriptionElement = document.querySelector('.text__description');
 const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
-const photoFiltersListElement = document.querySelector('.effects');
-const photoFilterItemElement = photoFiltersListElement.querySelectorAll('.effects__radio');
 
+const SCALE_CHANGE_STEP = 25;
+const SCALE_VALUE_MIN = 25;
+const SCALE_VALUE_MAX = 100;
 
 const modalEscKeyHandler = (evt) => {
   if (isEscapeKey(evt)) {
@@ -41,38 +42,27 @@ function closeModal () {
 photoUploadElement.addEventListener('change', uploadModalOpen);
 modalCloseButton.addEventListener('click', closeModal);
 
-let scaleValue = 100;
+let scaleValue = SCALE_VALUE_MAX;
 scalePhotoElement.value = `${scaleValue  }%`;
 
-const changeScaleSmaller = () => {
-  if (scaleValue > 25) {
-    scaleValue -= 25;
+const scaleIncreaseClickHandler = () => {
+  if (scaleValue > SCALE_VALUE_MIN) {
+    scaleValue -= SCALE_CHANGE_STEP;
     scalePhotoElement.value = `${scaleValue  }%`;
     photoUploadPreviewElement.style.transform = `scale(${scaleValue / 100})`;
   }
 };
 
-const changeScaleBigger = () => {
-  if (scaleValue < 100) {
-    scaleValue += 25;
+const scaleDecreaseClickHandler = () => {
+  if (scaleValue < SCALE_VALUE_MAX) {
+    scaleValue += SCALE_CHANGE_STEP;
     scalePhotoElement.value = `${scaleValue  }%`;
     photoUploadPreviewElement.style.transform = `scale(${scaleValue / 100})`;
   }
 };
 
-buttonSmallerElement.addEventListener('click', changeScaleSmaller);
-buttonBiggerElement.addEventListener('click', changeScaleBigger);
-
-const addFilterRadioHandler = (item) => {
-  item.addEventListener('change', () => {
-    photoUploadPreviewElement.classList = '';
-    photoUploadPreviewElement.classList.add(`effects__preview--${  item.value}`);
-  });
-};
-
-photoFilterItemElement.forEach((item) => {
-  addFilterRadioHandler(item);
-});
+buttonSmallerElement.addEventListener('click', scaleIncreaseClickHandler);
+buttonBiggerElement.addEventListener('click', scaleDecreaseClickHandler);
 
 const uploadForm = document.querySelector('.img-upload__form');
 const re = new RegExp('^#[A-Za-zА-Яа-яЁё0-9]{1,19}$', '');
@@ -85,16 +75,12 @@ const pristine = new Pristine(uploadForm, {
 
 const validateHashtagsLength = (value) => {
   const hashtagsArr = value.trim().split(' ');
-  let j = 0;
   for (let i = 0; i < hashtagsArr.length; i++) {
     if (hashtagsArr[i].length > 20) {
       return false;
-    }else {
-      j++;
     }
   }
-
-  return j === hashtagsArr.length;
+  return true;
 };
 
 const validateHashtagsQt = (value) => {
@@ -118,16 +104,11 @@ const validateHashtagsLetter = (value) => {
     }
   }
 
-  if (valid.includes(false)) {
-    return false;
-  }else {
-    return true;
-  }
+  return !valid.includes(false);
 };
 
 const validateHashtagsDoubl = (value) => {
   const hashtagsArr = value.trim().toLowerCase().split(' ').sort();
-  let valid = [];
 
   if (value === '' || hashtagsArr.length === 1) {
     return true;
@@ -135,19 +116,11 @@ const validateHashtagsDoubl = (value) => {
 
   for (let i = 0; i < hashtagsArr.length; i++) {
     if (hashtagsArr[i + 1] === hashtagsArr[i]) {
-      valid[i] = false;
-    }else {
-      valid[i] = true;
+      return false;
     }
   }
 
-  if (valid.includes(false)) {
-    valid = [];
-    return false;
-  }else {
-    valid = [];
-    return true;
-  }
+  return true;
 };
 
 pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsLength, 'Максимальная длина одного хэш-тега 20 символов, включая решётку');
