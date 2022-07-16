@@ -1,6 +1,7 @@
 const sliderElement = document.querySelector('.effect-level__slider');
 const effectsLevelElement = document.querySelector('.effect-level__value');
 const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
+const DEFAULT_EFFECT_ELEMENT = document.querySelector('#effect-none');
 
 const EFFECTS = {
   'NONE': {
@@ -110,3 +111,10 @@ inputs.forEach((item)  => {
 
 sliderElement.noUiSlider.on('update', sliderUpdateHandler);
 
+const resetEffects = () => {
+  currentEffect = DEFAULT_EFFECT;
+  DEFAULT_EFFECT_ELEMENT.checked = true;
+  updateSlider();
+};
+
+export {resetEffects};
