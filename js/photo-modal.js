@@ -37,7 +37,12 @@ const renderComments = () => {
     commentsListFragment.append(comment);
   });
   commentsTotalNumberElement.textContent = currentComments.length;
-  commentsCountModalElement.textContent = SHOW_COMMENTS;
+  if (currentComments.length > SHOW_COMMENTS) {
+    commentsCountModalElement.textContent = SHOW_COMMENTS;
+  }else {
+    commentsCountModalElement.textContent = currentComments.length;
+    commentsLoaderButton.classList.add('hidden');
+  }
 };
 
 const loadComments = () => {
