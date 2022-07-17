@@ -23,7 +23,7 @@ const sendData = (onSuccess, onFail, body) => {
     .then((responce) => {
       if (responce.ok) {
         onSuccess();
-      }else {
+      } else {
         onFail();
       }
     })
@@ -32,4 +32,4 @@ const sendData = (onSuccess, onFail, body) => {
     });
 };
 
-export {getData, sendData};
+export { getData, sendData };

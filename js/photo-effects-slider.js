@@ -1,6 +1,7 @@
 const sliderElement = document.querySelector('.effect-level__slider');
 const effectsLevelElement = document.querySelector('.effect-level__value');
 const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
+
 const DEFAULT_EFFECT_ELEMENT = document.querySelector('#effect-none');
 
 const EFFECTS = {
@@ -105,7 +106,7 @@ const addFilterRadioHandler = (event) => {
 };
 
 const inputs = document.querySelectorAll('.effects__radio');
-inputs.forEach((item)  => {
+inputs.forEach((item) => {
   addFilterRadioHandler(item);
 });
 
@@ -117,4 +118,4 @@ const resetEffects = () => {
   updateSlider();
 };
 
-export {resetEffects};
+export { resetEffects };

@@ -7,8 +7,6 @@ const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const checkLength = (string, maxLength) => string.length <= maxLength;
-
 const getRandomElement = (arr) => arr[getRandomNumber(0, arr.length - 1)];
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -37,4 +35,12 @@ const showLoadErrorMessage = (message) => {
   }, ERROR_MESSAGE_TIME);
 };
 
-export {getRandomNumber, checkLength, getRandomElement, isEscapeKey, showLoadErrorMessage};
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export { getRandomNumber, getRandomElement, isEscapeKey, showLoadErrorMessage, debounce };

@@ -22,10 +22,10 @@ const commentsListFragment = document.createDocumentFragment();
 
 const renderComments = () => {
   const loadedComments = currentComments.slice(0, commentsLoaded);
-  loadedComments.forEach(({avatar, name, message}) => {
+  loadedComments.forEach(({ avatar, name, message }) => {
     const comment = document.createElement('li');
     comment.classList.add('social__comment');
-    const commentAvatar =  document.createElement('img');
+    const commentAvatar = document.createElement('img');
     commentAvatar.classList.add('social__picture');
     commentAvatar.src = avatar;
     commentAvatar.alt = name;
@@ -39,7 +39,7 @@ const renderComments = () => {
   commentsTotalNumberElement.textContent = currentComments.length;
   if (currentComments.length > SHOW_COMMENTS) {
     commentsCountModalElement.textContent = SHOW_COMMENTS;
-  }else {
+  } else {
     commentsCountModalElement.textContent = currentComments.length;
     commentsLoaderButton.classList.add('hidden');
   }
@@ -75,7 +75,7 @@ const openPhotoModal = (photo) => {
   document.addEventListener('keydown', modalEscKeyHandler);
 };
 
-function closePhotoModal () {
+function closePhotoModal() {
   fullPhotoModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
@@ -86,4 +86,4 @@ function closePhotoModal () {
 
 modalCloseButton.addEventListener('click', closePhotoModal);
 
-export {openPhotoModal};
+export { openPhotoModal };

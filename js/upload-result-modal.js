@@ -23,7 +23,7 @@ const openErrorMessageModal = () => {
   });
 };
 
-function closeErrorMessageModal () {
+function closeErrorMessageModal() {
   document.querySelector('.error').remove();
   document.body.classList.remove('modal-open');
 }
@@ -47,8 +47,8 @@ const openSuccessMessageModal = () => {
   });
 };
 
-function closeSuccessMessageModal () {
+function closeSuccessMessageModal() {
   document.querySelector('.success').remove();
   document.body.classList.remove('modal-open');
 }
-export {openErrorMessageModal, openSuccessMessageModal};
+export { openErrorMessageModal, openSuccessMessageModal };
