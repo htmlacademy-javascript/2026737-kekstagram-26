@@ -147,7 +147,7 @@ pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHasht
 pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsLetter, 'Хэш-тег может состоять только из букв и чисел и начинаться с #');
 pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsDoubl, 'Хэш-теги не должны повторяться');
 
-const validateDescription = (value) => value.length < 140;
+const validateDescription = (value) => value.length <= 140;
 
 pristine.addValidator(uploadForm.querySelector('.text__description'), validateDescription, 'Максимальная длина 140 символов');
 
