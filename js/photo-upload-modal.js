@@ -13,12 +13,15 @@ const addHashtagElement = document.querySelector('.text__hashtags');
 const addDescriptionElement = document.querySelector('.text__description');
 const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
 const photoUploadButton = document.querySelector('#upload-submit');
+const fileChooserElement = document.querySelector('#upload-file');
+
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 const SCALE_CHANGE_STEP = 25;
 const SCALE_VALUE_MIN = 25;
 const SCALE_VALUE_MAX = 100;
 let scaleValue = SCALE_VALUE_MAX;
-scalePhotoElement.value = `${scaleValue  }%`;
+scalePhotoElement.value = `${scaleValue}%`;
 
 const modalEscKeyHandler = (evt) => {
   if (isEscapeKey(evt)) {
@@ -28,13 +31,13 @@ const modalEscKeyHandler = (evt) => {
   }
 };
 
-function uploadModalOpen () {
+function uploadModalOpen() {
   uploadFormOverlayElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', modalEscKeyHandler);
 }
 
-function closeModal () {
+function closeModal() {
   uploadFormOverlayElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', modalEscKeyHandler);
@@ -43,17 +46,28 @@ function closeModal () {
   addDescriptionElement.value = '';
   resetEffects();
   scaleValue = SCALE_VALUE_MAX;
-  scalePhotoElement.value = `${scaleValue  }%`;
+  scalePhotoElement.value = `${scaleValue}%`;
   photoUploadPreviewElement.style.transform = `scale(${scaleValue / 100})`;
 }
 
 photoUploadElement.addEventListener('change', uploadModalOpen);
 modalCloseButton.addEventListener('click', closeModal);
 
+fileChooserElement.addEventListener('change', () => {
+  const file = fileChooserElement.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    photoUploadPreviewElement.src = URL.createObjectURL(file);
+  }
+});
+
 const scaleDecreaseClickHandler = () => {
   if (scaleValue > SCALE_VALUE_MIN) {
     scaleValue -= SCALE_CHANGE_STEP;
-    scalePhotoElement.value = `${scaleValue  }%`;
+    scalePhotoElement.value = `${scaleValue}%`;
     photoUploadPreviewElement.style.transform = `scale(${scaleValue / 100})`;
   }
 };
@@ -61,7 +75,7 @@ const scaleDecreaseClickHandler = () => {
 const scaleIncreaseClickHandler = () => {
   if (scaleValue < SCALE_VALUE_MAX) {
     scaleValue += SCALE_CHANGE_STEP;
-    scalePhotoElement.value = `${scaleValue  }%`;
+    scalePhotoElement.value = `${scaleValue}%`;
     photoUploadPreviewElement.style.transform = `scale(${scaleValue / 100})`;
   }
 };
@@ -104,7 +118,7 @@ const validateHashtagsLetter = (value) => {
   for (let i = 0; i < hashtagsArr.length; i++) {
     if (re.test(hashtagsArr[i])) {
       valid[i] = true;
-    }else {
+    } else {
       valid[i] = false;
     }
   }
@@ -133,7 +147,7 @@ pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHasht
 pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsLetter, 'Хэш-тег может состоять только из букв и чисел и начинаться с #');
 pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsDoubl, 'Хэш-теги не должны повторяться');
 
-const validateDescription = (value) => value.length < 140;
+const validateDescription = (value) => value.length <= 140;
 
 pristine.addValidator(uploadForm.querySelector('.text__description'), validateDescription, 'Максимальная длина 140 символов');
 
@@ -158,7 +172,7 @@ const setUserFormSubmit = (onSuccess) => {
           unblockPhotoUploadButton();
           openSuccessMessageModal();
         },
-        () =>  {
+        () => {
           openErrorMessageModal();
           unblockPhotoUploadButton();
         },
@@ -168,4 +182,4 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-export {setUserFormSubmit, closeModal};
+export { setUserFormSubmit, closeModal, modalEscKeyHandler };
