@@ -1,7 +1,12 @@
 import { isEscapeKey } from './util.js';
+import { modalEscKeyHandler } from './photo-upload-modal.js';
 
 const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
 const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+
+const uploadFormOverlayElement = document.querySelector('.img-upload__overlay');
+const photoUploadElement = document.querySelector('#upload-file');
+
 
 const errorModalEscKeyHandler = (evt) => {
   if (isEscapeKey(evt)) {
@@ -32,10 +37,10 @@ const openErrorMessageModal = () => {
   const errorMessage = errorMessageTemplate.cloneNode(true);
   errorMessage.style.zIndex = '99';
   document.body.append(errorMessage);
-  document.body.classList.add('modal-open');
   errorMessage.querySelector('.error__button').addEventListener('click', () => {
     closeErrorMessageModal();
   });
+  document.removeEventListener('keydown', modalEscKeyHandler);
   document.addEventListener('click', errorModalClickHandler);
   document.addEventListener('keydown', errorModalEscKeyHandler);
 };
@@ -44,6 +49,8 @@ const openErrorMessageModal = () => {
 function closeErrorMessageModal() {
   const modal = document.querySelector('.error');
   modal.remove();
+  photoUploadElement.value = '';
+  uploadFormOverlayElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('click', errorModalClickHandler);
   document.removeEventListener('keydown', errorModalEscKeyHandler);

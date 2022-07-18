@@ -182,4 +182,4 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-export { setUserFormSubmit, closeModal };
+export { setUserFormSubmit, closeModal, modalEscKeyHandler };
