@@ -1,19 +1,21 @@
 import { sendData } from './api.js';
 import { resetEffects } from './photo-effects-slider.js';
-import { openSuccessMessageModal, openErrorMessageModal } from './upload-result-modal.js';
+import { openSuccessMessageModal, openErrorMessageModal } from './upload-result-modals.js';
 import { isEscapeKey } from './util.js';
 
-const buttonSmallerElement = document.querySelector('.scale__control--smaller');
-const buttonBiggerElement = document.querySelector('.scale__control--bigger');
-const scalePhotoElement = document.querySelector('.scale__control--value');
-const modalCloseButton = document.querySelector('#upload-cancel');
-const uploadFormOverlayElement = document.querySelector('.img-upload__overlay');
-const photoUploadElement = document.querySelector('#upload-file');
-const addHashtagElement = document.querySelector('.text__hashtags');
-const addDescriptionElement = document.querySelector('.text__description');
-const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
-const photoUploadButton = document.querySelector('#upload-submit');
-const fileChooserElement = document.querySelector('#upload-file');
+const imageUploadElement = document.querySelector('.img-upload');
+const buttonSmallerElement = imageUploadElement.querySelector('.scale__control--smaller');
+const buttonBiggerElement = imageUploadElement.querySelector('.scale__control--bigger');
+const scalePhotoElement = imageUploadElement.querySelector('.scale__control--value');
+const modalCloseButton = imageUploadElement.querySelector('#upload-cancel');
+const uploadFormOverlayElement = imageUploadElement.querySelector('.img-upload__overlay');
+const photoUploadElement = imageUploadElement.querySelector('#upload-file');
+const addHashtagElement = imageUploadElement.querySelector('.text__hashtags');
+const addDescriptionElement = imageUploadElement.querySelector('.text__description');
+const photoUploadPreviewElement = imageUploadElement.querySelector('.img-upload__preview img');
+const photoUploadButton = imageUploadElement.querySelector('#upload-submit');
+const fileChooserElement = imageUploadElement.querySelector('#upload-file');
+const uploadForm = imageUploadElement.querySelector('.img-upload__form');
 
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
@@ -21,7 +23,11 @@ const SCALE_CHANGE_STEP = 25;
 const SCALE_VALUE_MIN = 25;
 const SCALE_VALUE_MAX = 100;
 let scaleValue = SCALE_VALUE_MAX;
-scalePhotoElement.value = `${scaleValue}%`;
+
+const DESCKRIPTION_LENGTH_MAX = 140;
+const HASHTAG_LENGTH_MAX = 20;
+const HASHTAGS_COUNT_MAX = 5;
+const hashtagValidationRegex = new RegExp('^#[A-Za-zА-Яа-яЁё0-9]{1,19}$', '');
 
 const modalEscKeyHandler = (evt) => {
   if (isEscapeKey(evt)) {
@@ -50,20 +56,6 @@ function closeModal() {
   photoUploadPreviewElement.style.transform = `scale(${scaleValue / 100})`;
 }
 
-photoUploadElement.addEventListener('change', uploadModalOpen);
-modalCloseButton.addEventListener('click', closeModal);
-
-fileChooserElement.addEventListener('change', () => {
-  const file = fileChooserElement.files[0];
-  const fileName = file.name.toLowerCase();
-
-  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
-
-  if (matches) {
-    photoUploadPreviewElement.src = URL.createObjectURL(file);
-  }
-});
-
 const scaleDecreaseClickHandler = () => {
   if (scaleValue > SCALE_VALUE_MIN) {
     scaleValue -= SCALE_CHANGE_STEP;
@@ -80,22 +72,10 @@ const scaleIncreaseClickHandler = () => {
   }
 };
 
-buttonSmallerElement.addEventListener('click', scaleDecreaseClickHandler);
-buttonBiggerElement.addEventListener('click', scaleIncreaseClickHandler);
-
-const uploadForm = document.querySelector('.img-upload__form');
-const re = new RegExp('^#[A-Za-zА-Яа-яЁё0-9]{1,19}$', '');
-
-const pristine = new Pristine(uploadForm, {
-  classTo: 'img-upload__field-wrapper',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__field--error'
-});
-
 const validateHashtagsLength = (value) => {
   const hashtagsArr = value.trim().split(' ');
   for (let i = 0; i < hashtagsArr.length; i++) {
-    if (hashtagsArr[i].length > 20) {
+    if (hashtagsArr[i].length > HASHTAG_LENGTH_MAX) {
       return false;
     }
   }
@@ -104,7 +84,7 @@ const validateHashtagsLength = (value) => {
 
 const validateHashtagsQt = (value) => {
   const hashtagsArr = value.trim().split(' ');
-  return hashtagsArr.length <= 5;
+  return hashtagsArr.length <= HASHTAGS_COUNT_MAX;
 };
 
 const validateHashtagsLetter = (value) => {
@@ -116,17 +96,13 @@ const validateHashtagsLetter = (value) => {
   }
 
   for (let i = 0; i < hashtagsArr.length; i++) {
-    if (re.test(hashtagsArr[i])) {
-      valid[i] = true;
-    } else {
-      valid[i] = false;
-    }
+    valid[i] = hashtagValidationRegex.test(hashtagsArr[i]);
   }
 
   return !valid.includes(false);
 };
 
-const validateHashtagsDoubl = (value) => {
+const validateHashtagsDuplication = (value) => {
   const hashtagsArr = value.trim().toLowerCase().split(' ').sort();
 
   if (value === '' || hashtagsArr.length === 1) {
@@ -142,39 +118,54 @@ const validateHashtagsDoubl = (value) => {
   return true;
 };
 
-pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsLength, 'Максимальная длина одного хэш-тега 20 символов, включая решётку');
-pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsQt, 'Нельзя указать больше пяти хэш-тегов');
-pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsLetter, 'Хэш-тег может состоять только из букв и чисел и начинаться с #');
-pristine.addValidator(uploadForm.querySelector('.text__hashtags'), validateHashtagsDoubl, 'Хэш-теги не должны повторяться');
+const validateDescription = (value) => value.length <= DESCKRIPTION_LENGTH_MAX;
 
-const validateDescription = (value) => value.length <= 140;
+const initPhotoUpload = () => {
+  const pristine = new Pristine(uploadForm, {
+    classTo: 'img-upload__field-wrapper',
+    errorTextParent: 'img-upload__field-wrapper',
+    errorTextClass: 'img-upload__field--error'
+  });
 
-pristine.addValidator(uploadForm.querySelector('.text__description'), validateDescription, 'Максимальная длина 140 символов');
+  pristine.addValidator(addHashtagElement, validateHashtagsLength, 'Максимальная длина одного хэш-тега 20 символов, включая решётку');
+  pristine.addValidator(addHashtagElement, validateHashtagsQt, 'Нельзя указать больше пяти хэш-тегов');
+  pristine.addValidator(addHashtagElement, validateHashtagsLetter, 'Хэш-тег может состоять только из букв и чисел и начинаться с #');
+  pristine.addValidator(addHashtagElement, validateHashtagsDuplication, 'Хэш-теги не должны повторяться');
+  pristine.addValidator(addDescriptionElement, validateDescription, 'Максимальная длина 140 символов');
 
-const blockPhotoUploadButton = () => {
-  photoUploadButton.disabled = true;
-};
+  photoUploadElement.addEventListener('change', uploadModalOpen);
+  modalCloseButton.addEventListener('click', closeModal);
 
-const unblockPhotoUploadButton = () => {
-  photoUploadButton.disabled = false;
-};
+  scalePhotoElement.value = `${scaleValue}%`;
 
-const setUserFormSubmit = (onSuccess) => {
+  fileChooserElement.addEventListener('change', () => {
+    const file = fileChooserElement.files[0];
+    const fileName = file.name.toLowerCase();
+
+    const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+    if (matches) {
+      photoUploadPreviewElement.src = URL.createObjectURL(file);
+    }
+  });
+
+  buttonSmallerElement.addEventListener('click', scaleDecreaseClickHandler);
+  buttonBiggerElement.addEventListener('click', scaleIncreaseClickHandler);
+
   uploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    const isValid = pristine.validate();
-    if (isValid) {
-      blockPhotoUploadButton();
+    if (pristine.validate()) {
+      photoUploadButton.disabled = true;
       sendData(
         () => {
-          onSuccess();
-          unblockPhotoUploadButton();
+          closeModal();
+          photoUploadButton.disabled = false;
           openSuccessMessageModal();
         },
         () => {
           openErrorMessageModal();
-          unblockPhotoUploadButton();
+          photoUploadButton.disabled = false;
         },
         new FormData(evt.target),
       );
@@ -182,4 +173,4 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-export { setUserFormSubmit, closeModal, modalEscKeyHandler };
+export { initPhotoUpload, modalEscKeyHandler };
