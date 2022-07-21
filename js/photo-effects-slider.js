@@ -1,5 +1,6 @@
 const sliderElement = document.querySelector('.effect-level__slider');
 const effectsLevelElement = document.querySelector('.effect-level__value');
+const effectInputs = document.querySelectorAll('.effects__radio');
 const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
 
 const DEFAULT_EFFECT_ELEMENT = document.querySelector('#effect-none');
@@ -59,8 +60,6 @@ const DEFAULT_EFFECT = EFFECTS.NONE;
 let currentEffect = DEFAULT_EFFECT;
 let currentEffectName;
 
-sliderElement.classList.add('hidden');
-
 const updateSlider = () => {
   sliderElement.classList.remove('hidden');
   sliderElement.noUiSlider.updateOptions({
@@ -88,34 +87,36 @@ const sliderUpdateHandler = () => {
   effectsLevelElement.value = sliderValue;
 };
 
-noUiSlider.create(sliderElement, {
-  range: {
-    min: DEFAULT_EFFECT.min,
-    max: DEFAULT_EFFECT.max,
-  },
-  start: DEFAULT_EFFECT.max,
-  step: DEFAULT_EFFECT.step,
-});
-const addFilterRadioHandler = (event) => {
-  event.addEventListener('change', (evt) => {
-    currentEffectName = evt.target.value;
-    currentEffect = currentEffectName.toUpperCase();
-    currentEffect = EFFECTS[currentEffect];
-    updateSlider();
-  });
-};
-
-const inputs = document.querySelectorAll('.effects__radio');
-inputs.forEach((item) => {
-  addFilterRadioHandler(item);
-});
-
-sliderElement.noUiSlider.on('update', sliderUpdateHandler);
-
 const resetEffects = () => {
   currentEffect = DEFAULT_EFFECT;
   DEFAULT_EFFECT_ELEMENT.checked = true;
   updateSlider();
 };
 
-export { resetEffects };
+const handleEffectChange = (evt) => {
+  currentEffectName = evt.target.value;
+  currentEffect = currentEffectName.toUpperCase();
+  currentEffect = EFFECTS[currentEffect];
+  updateSlider();
+};
+
+const initPhotoEffectsSlider = () => {
+  sliderElement.classList.add('hidden');
+
+  noUiSlider.create(sliderElement, {
+    range: {
+      min: DEFAULT_EFFECT.min,
+      max: DEFAULT_EFFECT.max,
+    },
+    start: DEFAULT_EFFECT.max,
+    step: DEFAULT_EFFECT.step,
+  });
+
+  sliderElement.noUiSlider.on('update', sliderUpdateHandler);
+
+  effectInputs.forEach((item) => {
+    item.addEventListener('change', handleEffectChange);
+  });
+};
+
+export { initPhotoEffectsSlider, resetEffects };

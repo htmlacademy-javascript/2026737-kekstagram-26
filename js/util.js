@@ -7,8 +7,6 @@ const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getRandomElement = (arr) => arr[getRandomNumber(0, arr.length - 1)];
-
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const ERROR_MESSAGE_TIME = 3000;
@@ -43,4 +41,18 @@ const debounce = (callback, timeoutDelay) => {
   };
 };
 
-export { getRandomNumber, getRandomElement, isEscapeKey, showLoadErrorMessage, debounce };
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+const shuffle = (array) => {
+  let currentIndex = array.length, randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+};
+
+export { getRandomNumber, isEscapeKey, showLoadErrorMessage, debounce, shuffle };

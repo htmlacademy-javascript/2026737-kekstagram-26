@@ -1,20 +1,24 @@
 import { showLoadErrorMessage } from './util.js';
-import { openErrorMessageModal } from './upload-result-modal.js';
+import { openErrorMessageModal } from './upload-result-modals.js';
 
-const getData = (onSuccess) => {
-  fetch('https://26.javascript.pages.academy/kekstagram/data')
+const FETCH_DATA_URL = 'https://26.javascript.pages.academy/kekstagram/data';
+const SEND_DATA_URL = 'https://26.javascript.pages.academy/kekstagram';
+const LOAD_ERROR_MESSAGE = 'При загрузке данных с сервера произошла ошибка.';
+
+const fetchData = (onSuccess) => {
+  fetch(FETCH_DATA_URL)
     .then((responce) => responce.json())
     .then((photos) => {
       onSuccess(photos);
     })
     .catch(() => {
-      showLoadErrorMessage('При загрузке данных с сервера произошла ошибка.');
+      showLoadErrorMessage(LOAD_ERROR_MESSAGE);
     });
 };
 
 const sendData = (onSuccess, onFail, body) => {
   fetch(
-    'https://26.javascript.pages.academy/kekstagram',
+    SEND_DATA_URL,
     {
       method: 'POST',
       body,
@@ -32,4 +36,4 @@ const sendData = (onSuccess, onFail, body) => {
     });
 };
 
-export { getData, sendData };
+export { fetchData, sendData };

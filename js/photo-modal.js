@@ -46,7 +46,7 @@ const renderComments = () => {
 };
 
 const loadComments = () => {
-  commentsLoaded += 5;
+  commentsLoaded += SHOW_COMMENTS;
   renderComments();
   fullPhotoModal.querySelector('.social__comments').replaceChildren(commentsListFragment);
   commentsCountModalElement.textContent = fullPhotoModal.querySelector('.social__comments').children.length;
@@ -80,7 +80,7 @@ function closePhotoModal() {
   document.body.classList.remove('modal-open');
 
   document.removeEventListener('keydown', modalEscKeyHandler);
-  commentsLoaded = 5;
+  commentsLoaded = SHOW_COMMENTS;
   commentsLoaderButton.classList.remove('hidden');
 }
 
