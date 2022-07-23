@@ -136,7 +136,7 @@ const photoUploadElementChangeHandler = () => {
 
 const modalCloseButtonClickHandler = () => {
   closeModal();
-}
+};
 
 const initPhotoUpload = () => {
   const pristine = new Pristine(uploadForm, {
