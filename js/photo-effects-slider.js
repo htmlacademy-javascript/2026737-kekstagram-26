@@ -1,8 +1,3 @@
-const sliderElement = document.querySelector('.effect-level__slider');
-const effectsLevelElement = document.querySelector('.effect-level__value');
-const effectInputs = document.querySelectorAll('.effects__radio');
-const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
-
 const DEFAULT_EFFECT_ELEMENT = document.querySelector('#effect-none');
 
 const EFFECTS = {
@@ -57,11 +52,18 @@ const EFFECTS = {
 };
 
 const DEFAULT_EFFECT = EFFECTS.NONE;
+
+const effectLevelElement = document.querySelector('.img-upload__effect-level');
+const sliderElement = effectLevelElement.querySelector('.effect-level__slider');
+const effectsLevelValueElement = effectLevelElement.querySelector('.effect-level__value');
+const effectInputs = document.querySelectorAll('.effects__radio');
+const photoUploadPreviewElement = document.querySelector('.img-upload__preview img');
+
 let currentEffect = DEFAULT_EFFECT;
 let currentEffectName;
 
 const updateSlider = () => {
-  sliderElement.classList.remove('hidden');
+  effectLevelElement.classList.remove('hidden');
   sliderElement.noUiSlider.updateOptions({
     range: {
       min: currentEffect.min,
@@ -72,19 +74,19 @@ const updateSlider = () => {
   });
 
   if (currentEffect === DEFAULT_EFFECT) {
-    sliderElement.classList.add('hidden');
+    effectLevelElement.classList.add('hidden');
   }
 };
 
 const sliderUpdateHandler = () => {
   photoUploadPreviewElement.style.filter = 'none';
   photoUploadPreviewElement.classList = '';
-  effectsLevelElement.value = '';
+  effectsLevelValueElement.value = '';
 
   const sliderValue = sliderElement.noUiSlider.get();
   photoUploadPreviewElement.style.filter = `${currentEffect.effect}(${sliderValue}${currentEffect.effectUnit})`;
   photoUploadPreviewElement.classList.add = (`effects__preview--${currentEffectName}`);
-  effectsLevelElement.value = sliderValue;
+  effectsLevelValueElement.value = sliderValue;
 };
 
 const resetEffects = () => {
@@ -101,7 +103,7 @@ const handleEffectChange = (evt) => {
 };
 
 const initPhotoEffectsSlider = () => {
-  sliderElement.classList.add('hidden');
+  effectLevelElement.classList.add('hidden');
 
   noUiSlider.create(sliderElement, {
     range: {

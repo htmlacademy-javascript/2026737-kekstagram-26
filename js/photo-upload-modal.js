@@ -3,6 +3,24 @@ import { resetEffects } from './photo-effects-slider.js';
 import { openSuccessMessageModal, openErrorMessageModal } from './upload-result-modals.js';
 import { isEscapeKey } from './util.js';
 
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
+const SCALE_CHANGE_STEP = 25;
+const SCALE_VALUE_MIN = 25;
+const SCALE_VALUE_MAX = 100;
+
+const DESCRIPTION_LENGTH_MAX = 140;
+const HASHTAG_LENGTH_MAX = 20;
+const HASHTAGS_COUNT_MAX = 5;
+
+const ErrorMessage = {
+  BAD_HASHTAG_LENGTH: 'Максимальная длина одного хэш-тега 20 символов, включая решётку',
+  BAD_HASHTAGS_QUANTITY: 'Нельзя указать больше пяти хэш-тегов',
+  BAD_HASHTAG_LETTER: 'Хэш-тег может состоять только из букв и чисел и начинаться с #',
+  HASHTAG_DUPLICATE: 'Хэш-теги не должны повторяться',
+  BAD_DESCRIPTION_LENGTH: 'Максимальная длина 140 символов',
+};
+
 const imageUploadElement = document.querySelector('.img-upload');
 const buttonSmallerElement = imageUploadElement.querySelector('.scale__control--smaller');
 const buttonBiggerElement = imageUploadElement.querySelector('.scale__control--bigger');
@@ -17,16 +35,8 @@ const photoUploadButton = imageUploadElement.querySelector('#upload-submit');
 const fileChooserElement = imageUploadElement.querySelector('#upload-file');
 const uploadForm = imageUploadElement.querySelector('.img-upload__form');
 
-const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
-const SCALE_CHANGE_STEP = 25;
-const SCALE_VALUE_MIN = 25;
-const SCALE_VALUE_MAX = 100;
 let scaleValue = SCALE_VALUE_MAX;
-
-const DESCKRIPTION_LENGTH_MAX = 140;
-const HASHTAG_LENGTH_MAX = 20;
-const HASHTAGS_COUNT_MAX = 5;
 const hashtagValidationRegex = new RegExp('^#[A-Za-zА-Яа-яЁё0-9]{1,19}$', '');
 
 const modalEscKeyHandler = (evt) => {
@@ -89,17 +99,17 @@ const validateHashtagsQt = (value) => {
 
 const validateHashtagsLetter = (value) => {
   const hashtagsArr = value.trim().split(' ');
-  const valid = [];
+  const validationResults = [];
 
   if (value === '') {
     return true;
   }
 
   for (let i = 0; i < hashtagsArr.length; i++) {
-    valid[i] = hashtagValidationRegex.test(hashtagsArr[i]);
+    validationResults[i] = hashtagValidationRegex.test(hashtagsArr[i]);
   }
 
-  return !valid.includes(false);
+  return !validationResults.includes(false);
 };
 
 const validateHashtagsDuplication = (value) => {
@@ -118,7 +128,15 @@ const validateHashtagsDuplication = (value) => {
   return true;
 };
 
-const validateDescription = (value) => value.length <= DESCKRIPTION_LENGTH_MAX;
+const validateDescription = (value) => value.length <= DESCRIPTION_LENGTH_MAX;
+
+const photoUploadElementChangeHandler = () => {
+  uploadModalOpen();
+};
+
+const modalCloseButtonClickHandler = () => {
+  closeModal();
+}
 
 const initPhotoUpload = () => {
   const pristine = new Pristine(uploadForm, {
@@ -127,14 +145,14 @@ const initPhotoUpload = () => {
     errorTextClass: 'img-upload__field--error'
   });
 
-  pristine.addValidator(addHashtagElement, validateHashtagsLength, 'Максимальная длина одного хэш-тега 20 символов, включая решётку');
-  pristine.addValidator(addHashtagElement, validateHashtagsQt, 'Нельзя указать больше пяти хэш-тегов');
-  pristine.addValidator(addHashtagElement, validateHashtagsLetter, 'Хэш-тег может состоять только из букв и чисел и начинаться с #');
-  pristine.addValidator(addHashtagElement, validateHashtagsDuplication, 'Хэш-теги не должны повторяться');
-  pristine.addValidator(addDescriptionElement, validateDescription, 'Максимальная длина 140 символов');
+  pristine.addValidator(addHashtagElement, validateHashtagsLength, ErrorMessage.BAD_HASHTAG_LENGTH);
+  pristine.addValidator(addHashtagElement, validateHashtagsQt, ErrorMessage.BAD_HASHTAGS_QUANTITY);
+  pristine.addValidator(addHashtagElement, validateHashtagsLetter, ErrorMessage.BAD_HASHTAG_LETTER);
+  pristine.addValidator(addHashtagElement, validateHashtagsDuplication, ErrorMessage.HASHTAG_DUPLICATE);
+  pristine.addValidator(addDescriptionElement, validateDescription, ErrorMessage.BAD_DESCRIPTION_LENGTH);
 
-  photoUploadElement.addEventListener('change', uploadModalOpen);
-  modalCloseButton.addEventListener('click', closeModal);
+  photoUploadElement.addEventListener('change', photoUploadElementChangeHandler);
+  modalCloseButton.addEventListener('click', modalCloseButtonClickHandler);
 
   scalePhotoElement.value = `${scaleValue}%`;
 
@@ -164,8 +182,8 @@ const initPhotoUpload = () => {
           openSuccessMessageModal();
         },
         () => {
-          openErrorMessageModal();
           photoUploadButton.disabled = false;
+          openErrorMessageModal();
         },
         new FormData(evt.target),
       );

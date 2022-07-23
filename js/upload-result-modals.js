@@ -32,7 +32,6 @@ const successModalClickHandler = (evt) => {
   }
 };
 
-
 const openErrorMessageModal = () => {
   const errorMessage = errorMessageTemplate.cloneNode(true);
   errorMessage.style.zIndex = '99';
