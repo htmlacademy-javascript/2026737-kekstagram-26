@@ -1,5 +1,4 @@
 import { showLoadErrorMessage } from './util.js';
-import { openErrorMessageModal } from './upload-result-modals.js';
 
 const FETCH_DATA_URL = 'https://26.javascript.pages.academy/kekstagram/data';
 const SEND_DATA_URL = 'https://26.javascript.pages.academy/kekstagram';
@@ -32,7 +31,7 @@ const sendData = (onSuccess, onFail, body) => {
       }
     })
     .catch(() => {
-      openErrorMessageModal();
+      onFail();
     });
 };
 

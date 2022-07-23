@@ -1,8 +1,9 @@
 import { isEscapeKey } from './util.js';
 
+const SHOW_COMMENTS = 5;
+
 const fullPhotoModal = document.querySelector('.big-picture');
 const modalCloseButton = fullPhotoModal.querySelector('#picture-cancel');
-
 const commentsCountModalElement = fullPhotoModal.querySelector('.comments-loaded');
 const commentsTotalNumberElement = fullPhotoModal.querySelector('.comments-count');
 const commentsLoaderButton = fullPhotoModal.querySelector('.comments-loader');
@@ -12,8 +13,6 @@ const modalEscKeyHandler = (evt) => {
     closePhotoModal();
   }
 };
-
-const SHOW_COMMENTS = 5;
 
 let commentsLoaded = SHOW_COMMENTS;
 let currentComments = [];
@@ -56,7 +55,11 @@ const loadComments = () => {
   }
 };
 
-commentsLoaderButton.addEventListener('click', loadComments);
+const commentsLoaderButtonClickHandler = () => {
+  loadComments();
+};
+
+commentsLoaderButton.addEventListener('click', commentsLoaderButtonClickHandler);
 
 const openPhotoModal = (photo) => {
   fullPhotoModal.classList.remove('hidden');
@@ -84,6 +87,10 @@ function closePhotoModal() {
   commentsLoaderButton.classList.remove('hidden');
 }
 
-modalCloseButton.addEventListener('click', closePhotoModal);
+const modalCloseButtonClickHandler = () => {
+  closePhotoModal();
+};
+
+modalCloseButton.addEventListener('click', modalCloseButtonClickHandler);
 
 export { openPhotoModal };

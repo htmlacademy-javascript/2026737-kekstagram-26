@@ -1,15 +1,6 @@
-const getRandomNumber = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  if (min >= max || min < 0) {
-    throw new Error('Ошибка');
-  }
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+const ERROR_MESSAGE_TIME = 3000;
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
-
-const ERROR_MESSAGE_TIME = 3000;
 
 const showLoadErrorMessage = (message) => {
   const errorMessageElement = document.createElement('div');
@@ -55,4 +46,4 @@ const shuffle = (array) => {
   return array;
 };
 
-export { getRandomNumber, isEscapeKey, showLoadErrorMessage, debounce, shuffle };
+export { isEscapeKey, showLoadErrorMessage, debounce, shuffle };
